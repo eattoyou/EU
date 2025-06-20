@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EU Asian Immigrant Market Interactive Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Neutrals (Slate, Zinc, Stone) -->
+    <!-- Application Structure Plan: This application adopts a single-page dashboard layout. The top section features a global overview and core controls (country selector). After selecting a country, the four content cards below (Country Profile, Immigrant Origin, Supermarket Distribution, Restaurant Types) will dynamically update to display corresponding data and charts. This design breaks down complex data into easily understandable modules, allowing users to explore all relevant information through a single interaction (country selection), making the process intuitive and efficient. This structure prioritizes user exploration convenience over strict adherence to a linear report structure. -->
+    <!-- Visualization & Content Choices:
+        - Immigrant Ratio (Comparison): Uses a Chart.js bar chart to display the proportion of Asian immigrants in each country for quick comparison. This chart has been adjusted to fix UK data at the end.
+        - Immigrant Origin (Proportion): Uses a Chart.js doughnut chart to present the proportion of different immigrant origins within a single country, offering intuitive visualization. Percentage information has been added to legend labels. Interaction: Hover to display detailed percentages.
+        - Restaurant Count (Comparison): Uses a Chart.js bar chart to compare the number of restaurants by different cuisines. Interaction: Hover to display the number range.
+        - Supermarkets & Overview (Informative): Uses structured HTML/Tailwind cards to display textual information, clear and easy to read. Specifically, the supermarket list has been adjusted to display each item on a separate line, and estimated numbers for major UK city supermarkets have been updated.
+        - Overview of Asian Restaurant Count by Country: Added a single bar chart showing the total average number of Asian restaurants in each country. This chart uses a new green color palette for distinction from the immigrant ratio chart, and UK data is fixed at the end.
+        - Justification: The chosen chart types are best suited for the data's objectives (comparison, proportion). All charts are implemented using Chart.js based on Canvas, offering strong interactivity and adhering to the no-SVG requirement. Adjustments to the supermarket list improved readability for that section. Adding percentages to the immigrant origin legend enhanced data readability. The inclusion of estimated UK city supermarket data improved information completeness and accuracy (based on search results).
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif; /* Keeping Noto Sans TC as it supports Chinese characters if user switches back */
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        /* Adjust height for comparison charts */
+        .comparison-chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px; /* Increased max width */
+            margin-left: auto;
+            margin-right: auto;
+            height: 500px; /* Fixed height */
+            max-height: 60vh;
+        }
+
+        .main-title {
+            background: linear-gradient(to right, #4f46e5, #9333ea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <header class="text-center mb-8">
+            <div class="flex flex-col items-center justify-center mb-4">
+                <!-- LOGO image enlarged 3x (h-72 w-72) -->
+                <img src="https://www.weichuanusa.com/wp-content/uploads/2024/02/Logo.svg" onerror="this.src='https://placehold.co/100x100/transparent/transparent?text=Company+Logo'" alt="Company Logo" class="h-72 w-72 mb-0">
+                <h1 class="text-4xl md:text-5xl font-bold main-title">EU Asian Immigrant Market Charts</h1>
+            </div>
+            <!-- Reduced space between title (mt-1) -->
+            <p class="mt-1 text-lg text-slate-600">Explore the Asian community, market potential, and culinary culture in various EU countries.</p>
+        </header>
+
+        <section id="main-dashboard" class="bg-white p-6 rounded-2xl shadow-lg">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-slate-700 mb-2">Explore Country Data (Sorted by Immigrant Count)</h2>
+                <!-- Dropdown description updated -->
+                <p class="text-slate-500 mb-4">Please select a country from the dropdown menu, and the charts and information below will update in real-time.</p>
+                <select id="country-selector" class="w-full md:w-1/3 bg-slate-100 border-2 border-slate-200 rounded-lg p-3 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"></select>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                
+                <div id="profile-card" class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <h3 class="text-xl font-bold text-indigo-700 mb-4 flex items-center">
+                        <span class="mr-2">🌍</span>Country Profile
+                    </h3>
+                    <div id="profile-content" class="space-y-3 text-slate-700"></div>
+                </div>
+
+                <div id="supermarket-card" class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <h3 class="text-xl font-bold text-indigo-700 mb-4 flex items-center">
+                        <span class="mr-2">🛒</span>Main Asian Supermarkets / Major City Counts
+                    </h3>
+                    <div id="supermarket-content" class="space-y-3 text-slate-700"></div>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <h3 class="text-xl font-bold text-indigo-700 mb-4 text-center">Proportion of Main Immigrant Origins</h3>
+                    <div class="chart-container">
+                        <canvas id="immigrant-origin-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <h3 class="text-xl font-bold text-indigo-700 mb-4 text-center">Asian Restaurant Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="restaurant-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="comparison-section" class="mt-8 bg-white p-6 rounded-2xl shadow-lg">
+             <h2 class="text-2xl font-bold text-slate-700 mb-2">Overview of Asian Immigrant Ratio by Country</h2>
+             <p class="mt-4 text-slate-500 mb-4">This chart displays the proportion of Asian immigrants to the total population for all countries in the report, with UK data fixed at the end for quick horizontal comparison.</p>
+            <div class="comparison-chart-container">
+                <canvas id="comparison-chart"></canvas>
+            </div>
+        </section>
+
+        <!-- New chart section for overview of Asian restaurant count by country -->
+        <section id="restaurant-comparison-section" class="mt-8 bg-white p-6 rounded-2xl shadow-lg">
+             <h2 class="text-2xl font-bold text-slate-700 mb-2">Overview of Asian Restaurant Count by Country</h2>
+             <p class="mt-4 text-slate-500 mb-4">This chart displays the estimated total number of Asian restaurants in all countries in the report, with UK data fixed at the end for quick horizontal comparison.</p>
+            <div class="comparison-chart-container">
+                <canvas id="restaurant-comparison-chart"></canvas>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="text-center p-4 mt-8 text-sm text-slate-500">
+        <p>Data Source: EU Asian Immigrant - Supermarket - Restaurant Overview Report. Charts and data are for reference only.</p>
+    </footer>
+
+    <script>
+        // Data for the report, translated where applicable
+        const reportData = [
+            { country: "Germany", totalPop: 83.78, immigrantPop: 5.44, immigrantRatio: 6.5, sources: "Turkey (2.1%), China (1.2%), Vietnam (0.9%), Other (2.3%), Taiwan(<0.05%)", characteristics: "Western Europe, industrial hub; cuisine mainly meat and potatoes, like German sausage, pork knuckle. Strong beer culture.", supermarkets: ["Go Asia (approx. 63 branches)", "Vinh‑Loi Asien Supermarkt (approx. 5 branches)", "Eurumart (Korean online delivery)", "Ochama JD (online delivery)", "Berlin, approx. 95 stores", "Munich, approx. 48 stores", "Hamburg, approx. 33 stores", "Frankfurt, approx. 28 stores"], restaurants: { "Chinese": [4000, 6000], "Asian Buffet": [1000, 1500], "Japanese": [2000, 3000], "Thai": [1000, 1500], "Vietnamese": [1000, 1500], "Other": [800, 1200] } },
+            { country: "France", totalPop: 65.27, immigrantPop: 4.57, immigrantRatio: 7.0, sources: "Vietnam (1.8%), China (0.8%), Cambodia/Laos (1.2%), Other (3.2%), Taiwan(<0.05%)", characteristics: "Western Europe, former colonial background; refined cuisine, focusing on ingredient quality and cooking techniques, like foie gras, macarons.", supermarkets: ["Tang Frères (approx. 22 branches)", "Paris Store (approx. 21 branches)", "Le Carré Asian (online delivery)", "Ochama JD (online delivery)", "Paris, approx. 116 stores", "Lyon, approx. 15 stores"], restaurants: { "Chinese": [3000, 4000], "Asian Buffet": [500, 800], "Japanese": [2000, 3000], "Thai": [800, 1200], "Vietnamese": [800, 1200], "Other": [300, 600] } },
+            { country: "Italy", totalPop: 60.46, immigrantPop: 2.54, immigrantRatio: 4.2, sources: "Philippines (1.1%), China (0.9%), India (0.7%), Other (1.5%), Taiwan(<0.1%)", characteristics: "Southern Europe, manufacturing intensive; cuisine mainly pasta and pizza, like Italian pasta, Tiramisu.", supermarkets: ["Milan, approx. 45 stores", "Rome, approx. 30 stores", "Kathay.it (online delivery)", "8TTO MARKET (online delivery)"], restaurants: { "Chinese": [3000, 4000], "Asian Buffet": [600, 1000], "Japanese": [2500, 3500], "Thai": [200, 400], "Vietnamese": [100, 200], "Other": [300, 600] } },
+            { country: "Spain", totalPop: 46.75, immigrantPop: 1.64, immigrantRatio: 3.5, sources: "China (1.1%), Philippines (1.0%), Pakistan (0.6%), Other (0.8%), Taiwan(<0.1%)", characteristics: "Southern Europe, service industry dominated; diverse cuisine, abundant seafood and meat dishes, like Spanish paella, Tapas.", supermarkets: ["Barcelona, approx. 50 stores", "Madrid, approx. 45 stores", "Oriental Mart (online delivery)", "Tiantiangou Asian Food Supermarket (online delivery)"], restaurants: { "Chinese": [2500, 3500], "Asian Buffet": [500, 800], "Japanese": [3000, 4000], "Thai": [400, 600], "Vietnamese": [100, 200], "Other": [300, 500] } },
+            { country: "Netherlands", totalPop: 17.13, immigrantPop: 1.37, immigrantRatio: 8.0, sources: "Turkey (2.3%), Indonesia (1.5%), China (0.7%), Other (3.5%), Taiwan(<0.05%)", characteristics: "Western Europe, trade hub; simple cuisine, mainly dairy and vegetables, like Dutch stroopwafels, cheese.", supermarkets: ["Amazing Oriental (approx. 25 branches)", "Ochama JD (online delivery)", "Asia Express Food (online delivery)", "Amsterdam, approx. 25 stores", "The Hague, approx. 13 stores"], restaurants: { "Chinese": [1500, 2000], "Asian Buffet": [400, 600], "Japanese": [1000, 1300], "Indonesian": [500, 800], "Thai": [300, 500], "Vietnamese": [80, 150], "Other": [200, 400] } },
+            { country: "Sweden", totalPop: 10.10, immigrantPop: 0.61, immigrantRatio: 6.0, sources: "Syria/Iraq (3.2%), China (0.5%), Thailand (0.4%), Other (1.9%), Taiwan(<0.05%)", characteristics: "Northern Europe, refugee host; cuisine mainly fish, meatballs, and berries, like Swedish meatballs, herring.", supermarkets: ["Zurich, approx. 19 stores", "Lausanne, approx. 17 stores", "Geneva, approx. 15 stores", "Asia Markt (online delivery)"], restaurants: { "Chinese": [600, 800], "Asian Buffet": [300, 500], "Japanese": [800, 1000], "Thai": [400, 600], "Vietnamese": [50, 150], "Other": [400, 600] } },
+            { country: "Belgium", totalPop: 11.59, immigrantPop: 0.58, immigrantRatio: 5.0, sources: "Turkey (1.8%), India (0.9%), China (0.6%), Other (1.7%), Taiwan(<0.05%)", characteristics: "Western Europe, EU headquarters; known for fries, chocolate, and beer, like Belgian fries, waffles.", supermarkets: ["Brussels, approx. 25 stores", "Antwerp, approx. 17 stores", "Ochama JD (online delivery)"], restaurants: { "Chinese": [1500, 2000], "Asian Buffet": [300, 500], "Japanese": [800, 1200], "Thai": [300, 500], "Vietnamese": [200, 400], "Other": [200, 400] } },
+            { country: "Austria", totalPop: 9.01, immigrantPop: 0.50, immigrantRatio: 5.5, sources: "Turkey(2.5%), Syria (1.2%), China (0.4%), Other (1.4%), Taiwan(<0.05%)", characteristics: "Central Europe, high refugee proportion; cuisine mainly pastries and meat dishes, like Wiener Schnitzel, Sacher Torte.", supermarkets: ["Vienna, approx. 45 stores"], restaurants: { "Chinese": [800, 1200], "Asian Buffet": [200, 400], "Japanese": [500, 800], "Thai": [250, 350], "Vietnamese": [150, 250], "Other": [200, 350] } },
+            { country: "Poland", totalPop: 37.85, immigrantPop: 0.30, immigrantRatio: 0.8, sources: "Vietnam (0.4%), China (0.2%), Other (0.2%), Taiwan(<0.05%)", characteristics: "Eastern Europe, emerging immigrant destination; cuisine mainly dumplings, soups, and meat, like Polish pierogi, borscht.", supermarkets: ["Warsaw, approx. 20 stores"], restaurants: { "Chinese": [800, 1200], "Asian Buffet": [200, 400], "Japanese": [700, 1000], "Thai": [200, 350], "Vietnamese": [200, 350], "Other": [150, 300] } },
+            { country: "Portugal", totalPop: 10.27, immigrantPop: 0.26, immigrantRatio: 2.5, sources: "India (0.8%), China (0.6%), Bangladesh (0.5%), Other (0.6%), Taiwan(<0.05%)", characteristics: "Southern Europe, Portuguese-speaking immigrant and trade hub; known for seafood and egg tarts, like Portuguese egg tarts, grilled sardines.", supermarkets: ["Lisbon, 20 stores", "Porto, 10 stores"], restaurants: { "Chinese": [200, 400], "Asian Buffet": [80, 150], "Japanese": [250, 450], "Thai": [80, 150], "Vietnamese": [50, 100], "Other": [80, 150] } },
+            { country: "Denmark", totalPop: 5.79, immigrantPop: 0.24, immigrantRatio: 4.2, sources: "Turkey (1.0%), Pakistan (0.9%), China (0.4%), Other (1.9%), Taiwan(<0.05%)", characteristics: "Northern Europe, labor and refugee coexistence; cuisine mainly open sandwiches and pastries, like Danish pastry.", supermarkets: ["Copenhagen, approx. 46 stores"], restaurants: { "Chinese": [300, 500], "Asian Buffet": [100, 200], "Japanese": [300, 500], "Thai": [150, 250], "Vietnamese": [50, 100], "Other": [100, 200] } },
+            { country: "Greece", totalPop: 10.46, immigrantPop: 0.21, immigrantRatio: 2.0, sources: "Pakistan (0.8%), Bangladesh (0.6%), China (0.3%), Other (0.3%), Taiwan(<0.05%)", characteristics: "Southern Europe, increasing Asian immigrants; cuisine mainly Mediterranean, like Greek salad, souvlaki.", supermarkets: ["Athens, approx. 10–12 stores"], restaurants: { "Chinese": [200, 350], "Asian Buffet": [50, 100], "Japanese": [150, 250], "Thai": [80, 150], "Vietnamese": [20, 50], "Other": [50, 100] } },
+            { country: "Czech Republic", totalPop: 10.69, immigrantPop: 0.21, immigrantRatio: 2.0, sources: "Vietnam (1.4%), China (0.3%), Other (0.3%), Taiwan(<0.05%)", characteristics: "Central Europe, large Vietnamese community; cuisine mainly roasted meats and stews, like roasted pork knuckle, Czech dumplings.", supermarkets: ["Prague, approx. 25 stores"], restaurants: { "Chinese": [250, 400], "Asian Buffet": [80, 150], "Japanese": [200, 350], "Thai": [80, 150], "Vietnamese": [200, 350], "Other": [50, 100] } },
+            { country: "Ireland", totalPop: 5.03, immigrantPop: 0.20, immigrantRatio: 4.0, sources: "India (1.5%), Philippines (1.0%), China (0.5%), Other (1.0%), Taiwan(<0.05%)", characteristics: "Western Europe, technology and healthcare oriented; cuisine mainly stews and potatoes, like Irish stew, mashed potatoes.", supermarkets: ["Cork, approx. 12 stores", "Dublin, approx. 7 stores"], restaurants: { "Chinese": [300, 500], "Asian Buffet": [80, 150], "Japanese": [250, 400], "Thai": [150, 250], "Vietnamese": [30, 80], "Other": [80, 150] } },
+            { country: "Hungary", totalPop: 9.66, immigrantPop: 0.12, immigrantRatio: 1.2, sources: "China (0.5%), Vietnam (0.3%), Other (0.4%), Taiwan(<0.05%)", characteristics: "Eastern Europe, investment immigration; cuisine mainly stews and spicy dishes, like Hungarian goulash.", supermarkets: ["Budapest, approx. 20 stores"], restaurants: { "Chinese": [200, 350], "Asian Buffet": [50, 100], "Japanese": [150, 250], "Thai": [80, 150], "Vietnamese": [80, 150], "Other": [50, 100] } },
+            { country: "Finland", totalPop: 5.56, immigrantPop: 0.11, immigrantRatio: 2.0, sources: "China (0.5%), Iraq/Syria (1.1%), Other (0.4%), Taiwan(<0.05%)", characteristics: "Northern Europe, technology and social welfare state; cuisine mainly fish and berries, like Karelian pies.", supermarkets: ["Helsinki, approx. 15 stores"], restaurants: { "Chinese": [150, 250], "Asian Buffet": [50, 100], "Japanese": [150, 250], "Thai": [80, 150], "Vietnamese": [30, 80], "Other": [50, 100] } },
+            { country: "Luxembourg", totalPop: 0.67, immigrantPop: 0.04, immigrantRatio: 5.5, sources: "China (1.0%), India (1.2%), Other (3.3%), Taiwan(<0.05%)", characteristics: "Western Europe, small country with high income; cuisine influenced by French and German, like Luxembourgish sausages.", supermarkets: ["Luxembourg City, approx. 5 stores"], restaurants: { "Chinese": [50, 100], "Asian Buffet": [20, 40], "Japanese": [30, 60], "Thai": [20, 40], "Vietnamese": [10, 20], "Other": [10, 20] } },
+            { country: "Malta", totalPop: 0.52, immigrantPop: 0.02, immigrantRatio: 4.5, sources: "India (2.0%), Philippines (1.0%), Other (1.5%), Taiwan(<0.05%)", characteristics: "Mediterranean island nation, English widely spoken; cuisine blends Mediterranean flavors, like rabbit stew, Pastizzi.", supermarkets: ["Valletta, approx. 6 stores"], restaurants: { "Chinese": [20, 40], "Asian Buffet": [10, 20], "Japanese": [15, 30], "Thai": [10, 20], "Vietnamese": [5, 10], "Other": [5, 10] } },
+            { country: "Slovenia", totalPop: 2.11, immigrantPop: 0.02, immigrantRatio: 0.8, sources: "China (0.3%), India/Other (0.5%), Taiwan(<0.05%)", characteristics: "Central Europe, trade exchange point; cuisine influenced by Austria and Italy, like sausages, stews.", supermarkets: ["Ljubljana, approx. 6 stores"], restaurants: { "Chinese": [20, 40], "Asian Buffet": [5, 15], "Japanese": [10, 20], "Thai": [5, 15], "Vietnamese": [2, 5], "Other": [5, 10] } },
+            { country: "Estonia", totalPop: 1.33, immigrantPop: 0.01, immigrantRatio: 1.0, sources: "China (0.3%), India/Bangladesh (0.3%), Other (0.4%), Taiwan(<0.05%)", characteristics: "Baltic state, technology development; cuisine mainly black bread and pork, like blood sausage.", supermarkets: ["Tallinn, 5–6 stores"], restaurants: { "Chinese": [20, 40], "Asian Buffet": [5, 15], "Japanese": [10, 20], "Thai": [5, 15], "Vietnamese": [2, 5], "Other": [5, 10] } },
+            { country: "Lithuania", totalPop: 2.83, immigrantPop: 0.02, immigrantRatio: 0.7, sources: "China (0.3%), India (0.2%), Other (0.2%), Taiwan(<0.05%)", characteristics: "Baltic state; cuisine mainly potatoes and meat, like potato dumplings.", supermarkets: ["Vilnius, approx. 6 stores"], restaurants: { "Chinese": [20, 40], "Asian Buffet": [5, 15], "Japanese": [10, 20], "Thai": [5, 15], "Vietnamese": [2, 5], "Other": [5, 10] } },
+            { country: "Latvia", totalPop: 1.89, immigrantPop: 0.01, immigrantRatio: 0.6, sources: "China (0.2%), Vietnam (0.2%), Other (0.2%), Taiwan(<0.05%)", characteristics: "Baltic state; cuisine mainly black bread and dairy products, like Latvian black bread.", supermarkets: ["Riga, approx. 5 stores"], restaurants: { "Chinese": [20, 40], "Asian Buffet": [5, 15], "Japanese": [10, 20], "Thai": [5, 15], "Vietnamese": [2, 5], "Other": [5, 10] } },
+            { country: "Croatia", totalPop: 3.87, immigrantPop: 0.02, immigrantRatio: 0.6, sources: "China (0.2%), Philippines (0.2%), Other (0.2%), Taiwan(<0.05%)", characteristics: "Southern Europe, tourism dominated; cuisine mainly seafood and Mediterranean flavors, like Peka.", supermarkets: ["Zagreb, approx. 7 stores"], restaurants: { "Chinese": [20, 40], "Asian Buffet": [5, 15], "Japanese": [10, 20], "Thai": [5, 15], "Vietnamese": [2, 5], "Other": [5, 10] } },
+            { country: "Bulgaria", totalPop: 6.46, immigrantPop: 0.04, immigrantRatio: 0.6, sources: "China (0.2%), Vietnam/Other (0.4%), Taiwan(<0.05%)", characteristics: "Southeast Europe, industrial transition; cuisine mainly dairy and vegetables, like Bulgarian yogurt.", supermarkets: ["Sofia, approx. 8 stores"], restaurants: { "Chinese": [30, 60], "Asian Buffet": [10, 20], "Japanese": [20, 40], "Thai": [10, 20], "Vietnamese": [5, 10], "Other": [10, 20] } },
+            { country: "Romania", totalPop: 19.24, immigrantPop: 0.10, immigrantRatio: 0.5, sources: "China (0.2%), Turkey* (0.1%), Other (0.2%), Taiwan(<0.05%)", characteristics: "Eastern Europe, sparse Asian population; cuisine mainly cornmeal and stews, like Sarmale.", supermarkets: ["Bucharest, approx. 14 stores"], restaurants: { "Chinese": [80, 150], "Asian Buffet": [20, 40], "Japanese": [50, 100], "Thai": [30, 60], "Vietnamese": [10, 20], "Other": [20, 40] } },
+            { country: "Slovakia", totalPop: 5.43, immigrantPop: 0.03, immigrantRatio: 0.5, sources: "Vietnam (0.3%), China (0.1%), Other (0.1%), Taiwan(<0.05%)", characteristics: "Central Europe, small immigrant group; cuisine mainly potatoes and cheese, like Bryndzové Halušky.", supermarkets: ["Bratislava, approx. 6 stores"], restaurants: { "Chinese": [30, 60], "Asian Buffet": [10, 20], "Japanese": [20, 40], "Thai": [10, 20], "Vietnamese": [10, 20], "Other": [10, 20] } },
+            { country: "United Kingdom (Non-EU)", totalPop: 67.6, immigrantPop: 5.76, immigrantRatio: 8.6, sources: "India (2.9%), Pakistan (2.5%), Bangladesh (1.0%), China (0.8%), Other (1.5%), Taiwan(<0.01%)", characteristics: "Western Europe, multicultural center; cuisine mainly fish and chips, roast dinners, and English breakfast.", supermarkets: [
+                "Oseyo (largest Korean/Asian chain, approx. 14+ branches)",
+                "Longdan (multiple locations in London)",
+                "Tian Tian Market (multiple locations in London)",
+                "Seoul Plaza (branches in London and other cities)",
+                "London, approx. 100-150 stores",
+                "Manchester, approx. 20-30 stores",
+                "Birmingham, approx. 15-25 stores"
+            ], restaurants: { "Chinese": [4000, 6000], "Asian Buffet": [1000, 1500], "Japanese": [1500, 2500], "Thai": [800, 1200], "Vietnamese": [300, 500], "Indian": [8000, 10000], "Pakistani": [3000, 4000], "Filipino": [100, 200], "Other": [1000, 1500] } }
+        ];
+
+        let immigrantOriginChart, restaurantChart, comparisonChart, restaurantComparisonChart;
+        
+        // Defined chart colors for consistency across dashboards
+        const chartColors = {
+            primary: 'rgba(79, 70, 229, 0.8)',      // Indigo
+            primaryBg: 'rgba(79, 70, 229, 0.1)',
+            secondary: 'rgba(147, 51, 234, 0.8)',    // Purple
+            secondaryBg: 'rgba(147, 51, 234, 0.1)',
+            accent: 'rgba(217, 70, 239, 0.8)',      // Fuchsia (for UK emphasis)
+            accentBg: 'rgba(217, 70, 239, 0.1)',
+            neutral: 'rgba(100, 116, 139, 0.8)',     // Slate
+            neutralBg: 'rgba(100, 116, 139, 0.1)',
+        };
+        
+        // Palette for immigrant origin and single country restaurant charts (retains original style)
+        const palette = [chartColors.primary, chartColors.secondary, chartColors.accent, '#7dd3fc', '#facc15', '#fb923c', '#4ade80'];
+
+        // Define a new green theme color for the "Overview of Asian Restaurant Count" chart
+        const restaurantComparisonThemeColor = '#059669'; // Emerald 700 as a single theme color
+
+        /**
+         * Parses a source string to extract labels and numerical values.
+         * @param {string} sourceStr - The source string, e.g., "Turkey (2.1%), China (1.2%)"
+         * @returns {object} An object containing labels and values: { labels: [], values: [] }
+         */
+        function parseSourceString(sourceStr) {
+            const sources = sourceStr.split(', ').map(s => s.trim());
+            const data = { labels: [], values: [] };
+            sources.forEach(source => {
+                const match = source.match(/(.+?)\s?\((\S+?)(%?)\)/);
+                if (match) {
+                    const label = match[1].trim();
+                    let value = parseFloat(match[2].replace('<', '')); // Extracts 0.05 from <0.05%
+                    if(!isNaN(value)) {
+                       data.labels.push(label);
+                       data.values.push(value);
+                    }
+                }
+            });
+            return data;
+        }
+        
+        /**
+         * Calculates the average of a numerical range.
+         * @param {number[]} range - An array representing the numerical range [min, max]
+         * @returns {number} The average value.
+         */
+        function getAverage(range) {
+            if (!range || range.length !== 2) return 0;
+            return (range[0] + range[1]) / 2;
+        }
+
+        /**
+         * Updates the dashboard's information and charts for the selected country.
+         * @param {string} countryName - The name of the country.
+         */
+        function updateDashboard(countryName) {
+            const data = reportData.find(c => c.country === countryName);
+            if (!data) return;
+
+            const profileContent = document.getElementById('profile-content');
+            profileContent.innerHTML = `
+                <p><strong>Total Population:</strong> ${data.totalPop} Million</p>
+                <p><strong>Asian Immigrant Count:</strong> ≈${data.immigrantPop} Million</p>
+                <p><strong>Asian Immigrant Ratio:</strong> ≈${data.immigrantRatio}%</p>
+                <p><strong>Regional Characteristics & Culinary Features:</strong> ${data.characteristics}</p>
+            `;
+
+            const supermarketContent = document.getElementById('supermarket-content');
+            supermarketContent.innerHTML = `<ul class="list-disc list-inside text-slate-700 space-y-1">${data.supermarkets.map(item => `<li>${item}</li>`).join('')}</ul>`;
+
+            const sourceData = parseSourceString(data.sources);
+            if (immigrantOriginChart) immigrantOriginChart.destroy();
+            immigrantOriginChart = new Chart(document.getElementById('immigrant-origin-chart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: sourceData.labels,
+                    datasets: [{
+                        label: 'Proportion of Main Immigrant Origins',
+                        data: sourceData.values,
+                        backgroundColor: palette,
+                        borderColor: '#f8fafc',
+                        borderWidth: 4,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { 
+                                font: { size: 12 },
+                                // Custom label generation to include percentage in the legend
+                                generateLabels: function(chart) {
+                                    const data = chart.data;
+                                    if (data.labels.length && data.datasets.length) {
+                                        return data.labels.map(function(label, i) {
+                                            const value = data.datasets[0].data[i];
+                                            return {
+                                                text: `${label}: ${value}%`, // Display label and its percentage value
+                                                fillStyle: data.datasets[0].backgroundColor[i],
+                                                strokeStyle: data.datasets[0].borderColor[i],
+                                                lineWidth: data.datasets[0].borderWidth,
+                                                hidden: !chart.isDatasetVisible(0) || data.datasets[0].hidden,
+                                                index: i
+                                            };
+                                        });
+                                    }
+                                    return [];
+                                }
+                            } 
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+
+            const restaurantData = data.restaurants;
+            const restaurantLabels = Object.keys(restaurantData);
+            const restaurantValues = restaurantLabels.map(label => getAverage(restaurantData[label]));
+            
+            if (restaurantChart) restaurantChart.destroy();
+            restaurantChart = new Chart(document.getElementById('restaurant-chart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: restaurantLabels,
+                    datasets: [{
+                        label: 'Average Restaurant Count',
+                        data: restaurantValues,
+                        backgroundColor: palette.map((color, i) => color.replace('0.8', '0.6')),
+                        borderColor: palette,
+                        borderWidth: 2,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(203, 213, 225, 0.3)'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                             callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const originalRange = restaurantData[label];
+                                    return `${label}: Approx. ${originalRange[0]} ~ ${originalRange[1]} stores`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        /**
+         * Initializes the bar chart for the "Overview of Asian Immigrant Ratio by Country".
+         */
+        function initializeComparisonChart() {
+            // Filter out UK data
+            const ukData = reportData.find(c => c.country.includes('United Kingdom'));
+            const otherCountries = reportData.filter(c => !c.country.includes('United Kingdom'));
+
+            // Sort other countries by immigrant ratio in descending order
+            const sortedOtherCountries = [...otherCountries].sort((a, b) => b.immigrantRatio - a.immigrantRatio);
+
+            // Combine sorted other countries with UK at the end
+            const finalSortedData = ukData ? [...sortedOtherCountries, ukData] : sortedOtherCountries;
+
+            const labels = finalSortedData.map(d => d.country);
+            const values = finalSortedData.map(d => d.immigrantRatio);
+            
+            if (comparisonChart) comparisonChart.destroy(); // Destroy existing chart if it exists
+            comparisonChart = new Chart(document.getElementById('comparison-chart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Asian Immigrant Ratio (%)',
+                        data: values,
+                        backgroundColor: (context) => {
+                            // Check if the label contains "United Kingdom"
+                            return context.chart.data.labels[context.dataIndex].includes('United Kingdom') ? chartColors.accent : chartColors.primaryBg;
+                        },
+                        borderColor: (context) => {
+                            // Check if the label contains "United Kingdom"
+                            return context.chart.data.labels[context.dataIndex].includes('United Kingdom') ? chartColors.accent : chartColors.primary;
+                        },
+                        borderWidth: 2,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Immigrants as % of Total Population'
+                            },
+                             grid: {
+                                color: 'rgba(203, 213, 225, 0.3)'
+                            }
+                        },
+                        x: {
+                             grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Initializes the bar chart for the "Overview of Asian Restaurant Count by Country" (non-stacked), using a single theme color.
+         */
+        function initializeRestaurantComparisonChart() {
+            // Filter out UK data
+            const ukData = reportData.find(c => c.country.includes('United Kingdom'));
+            const otherCountries = reportData.filter(c => !c.country.includes('United Kingdom'));
+
+            // Calculate the total average number of Asian restaurants for each country for sorting
+            const restaurantTotalsForSorting = otherCountries.map(country => {
+                let totalAverage = 0;
+                for (const cuisine in country.restaurants) {
+                    totalAverage += getAverage(country.restaurants[cuisine]);
+                }
+                return {
+                    country: country.country,
+                    totalRestaurants: totalAverage
+                };
+            });
+
+            // Sort other countries by total restaurant count in descending order
+            const sortedRestaurantData = [...restaurantTotalsForSorting].sort((a, b) => b.totalRestaurants - a.totalRestaurants);
+
+            // If UK data exists, calculate its total average count and append it to the end
+            if (ukData) {
+                let ukTotalAverage = 0;
+                for (const cuisine in ukData.restaurants) {
+                    ukTotalAverage += getAverage(ukData.restaurants[cuisine]);
+                }
+                sortedRestaurantData.push({
+                    country: ukData.country,
+                    totalRestaurants: ukTotalAverage
+                });
+            }
+
+            const labels = sortedRestaurantData.map(d => d.country);
+            const values = sortedRestaurantData.map(d => d.totalRestaurants);
+            
+            if (restaurantComparisonChart) restaurantComparisonChart.destroy(); // Destroy existing chart if it exists
+            restaurantComparisonChart = new Chart(document.getElementById('restaurant-comparison-chart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Estimated Total Asian Restaurant Count',
+                        data: values,
+                        backgroundColor: (context) => {
+                            // Check if the label contains "United Kingdom" and use accent color or theme color
+                            return context.chart.data.labels[context.dataIndex].includes('United Kingdom') ? chartColors.accent : restaurantComparisonThemeColor;
+                        },
+                        borderColor: (context) => {
+                            // Check if the label contains "United Kingdom" and use accent color or theme color
+                            return context.chart.data.labels[context.dataIndex].includes('United Kingdom') ? chartColors.accent : restaurantComparisonThemeColor;
+                        },
+                        borderWidth: 2,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }, // Single bar chart does not need a legend
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = Math.round(context.raw);
+                                    return `${label}: Approx. ${value} stores`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: false, // Not stacked
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            stacked: false, // Not stacked
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Estimated Total Asian Restaurant Count'
+                            },
+                             grid: {
+                                color: 'rgba(203, 213, 225, 0.3)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const selector = document.getElementById('country-selector');
+            
+            // Separate UK data from the rest for dropdown sorting
+            const ukDataForSelector = reportData.find(c => c.country.includes('United Kingdom'));
+            const otherCountriesForSelector = reportData.filter(c => !c.country.includes('United Kingdom'));
+
+            // Sort other countries by immigrantPop (Asian Immigrant Count) in descending order
+            const sortedOtherCountriesForSelector = [...otherCountriesForSelector].sort((a, b) => b.immigrantPop - a.immigrantPop);
+
+            // Combine sorted other countries with UK at the end for the dropdown
+            const finalSortedDataForSelector = ukDataForSelector ? [...sortedOtherCountriesForSelector, ukDataForSelector] : sortedOtherCountriesForSelector;
+
+
+            finalSortedDataForSelector.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c.country;
+                option.textContent = c.country;
+                selector.appendChild(option);
+            });
+
+            selector.addEventListener('change', (e) => {
+                updateDashboard(e.target.value);
+            });
+            
+            // Set Germany as the default selected country
+            selector.value = 'Germany';
+            updateDashboard('Germany');
+            initializeComparisonChart();
+            initializeRestaurantComparisonChart(); // Initialize the new restaurant count overview chart
+        });
+
+    </script>
+</body>
+</html>
