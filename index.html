@@ -3,13 +3,13 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EU Asian Immigrant Market Interactive Dashboard</title>
+    <title>EU Asia Immigrant Market Interactive Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            font-family: 'Noto Sans TC', sans-serif;
+            font-family: 'Noto Sans TC', sans-serif; /* Keeping Noto Sans TC as it's a good general-purpose font, or could switch to 'Inter' if preferred for English */
             background-color: #f8fafc; /* slate-50 */
         }
         .chart-container {
@@ -41,8 +41,9 @@
             background: linear-gradient(to right, #4f46e5, #9333ea);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            line-height: 1.3; /* Adjusted line-height */
-            padding-bottom: 6px; /* Increased padding-bottom */
+            /* Increased padding-bottom and line-height to prevent text clipping */
+            padding-bottom: 0.5rem; /* Adjusted for more space */
+            line-height: 1.3; /* Adjusted for more vertical room */
         }
     </style>
 </head>
@@ -52,19 +53,19 @@
         
         <header class="text-center mb-8">
             <div class="flex flex-col items-center justify-center mb-4">
-                <!-- LOGO image adjusted for responsiveness and increased top margin for spacing -->
+                <!-- LOGO image adjusted for responsiveness and added top margin to separate from title -->
                 <img src="https://www.weichuanusa.com/wp-content/uploads/2024/02/Logo.svg" onerror="this.src='https://placehold.co/100x100/transparent/transparent?text=Company+Logo'" alt="Company Logo" class="max-h-72 w-auto mb-8 rounded-xl">
-                <h1 class="text-4xl md:text-5xl font-bold main-title">EU Asian Immigrant Market Charts</h1>
+                <h1 class="text-4xl md:text-5xl font-bold main-title">EU / UK Region, Asian Immigrant Market Charts</h1>
             </div>
-            <!-- Subtitle margin changed back to mt-2 -->
-            <p class="mt-2 text-lg text-slate-600">Explore the Asian community, market potential, and culinary culture in various EU countries</p>
+            <!-- Reduced gap with title (mt-1) -->
+            <p class="mt-1 text-lg text-slate-600">In-depth exploration of Asian communities, market status, and food culture in various EU countries</p>
         </header>
 
         <section id="main-dashboard" class="bg-white p-6 rounded-2xl shadow-lg">
             <div class="mb-6">
                 <h2 class="text-2xl font-bold text-slate-700 mb-2">Explore Country Data (Sorted by Immigrant Population)</h2>
                 <!-- Dropdown menu description updated -->
-                <p class="text-slate-500 mb-4">Please select a country from the dropdown menu to update the charts and information below in real-time.</p>
+                <p class="text-slate-500 mb-4">Please select a country from the dropdown menu, and the charts and information below will update in real-time.</p>
                 <select id="country-selector" class="w-full md:w-1/3 bg-slate-100 border-2 border-slate-200 rounded-lg p-3 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"></select>
             </div>
 
@@ -81,7 +82,7 @@
 
                 <div id="supermarket-card" class="bg-slate-50 p-6 rounded-xl border border-slate-200">
                     <h3 class="text-xl font-bold text-indigo-700 mb-4 flex items-center">
-                        <span class="mr-2">🛒</span>Main Asian Supermarkets/Major City Count & Wholesalers
+                        <span class="mr-2">🛒</span>Main Asian Supermarkets / Major City Numbers & Wholesalers
                     </h3>
                     <div id="supermarket-content" class="space-y-3 text-slate-700">
                         <!-- Content will be dynamically loaded here -->
@@ -89,14 +90,14 @@
                 </div>
 
                 <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
-                    <h3 class="text-xl font-bold text-indigo-700 mb-4 text-center">Immigrant Main Origin Countries Proportion</h3>
+                    <h3 class="text-xl font-bold text-indigo-700 mb-4 text-center">Proportion of Immigrants by Main Origin Country</h3>
                     <div class="chart-container">
                         <canvas id="immigrant-origin-chart"></canvas>
                     </div>
                 </div>
 
                 <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
-                    <h3 class="text-xl font-bold text-indigo-700 mb-4 text-center">Asian Restaurant Count Distribution</h3>
+                    <h3 class="text-xl font-bold text-indigo-700 mb-4 text-center">Distribution of Asian Restaurant Numbers</h3>
                     <div class="chart-container">
                         <canvas id="restaurant-chart"></canvas>
                     </div>
@@ -105,26 +106,35 @@
         </section>
 
         <section id="comparison-section" class="mt-8 bg-white p-6 rounded-2xl shadow-lg">
-             <h2 class="text-2xl font-bold text-slate-700 mb-2">Overview of Asian Immigrant Ratio by Country</h2>
-             <p class="mt-4 text-slate-500 mb-4">This chart displays the proportion of Asian immigrants to the total population for all countries in the report, with UK data fixed at the end for quick horizontal comparison.</p>
+             <h2 class="text-2xl font-bold text-slate-700 mb-2">Overview of Asian Immigrant Ratios by Country</h2>
+             <p class="mt-4 text-slate-500 mb-4">This chart shows the proportion of Asian immigrants to the total population for all countries in the report, with UK data fixed at the end for quick horizontal comparison.</p>
             <div class="comparison-chart-container">
                 <canvas id="comparison-chart"></canvas>
             </div>
         </section>
 
-        <!-- New section for Overview of Asian Restaurant Count by Country -->
+        <!-- New section for overview of Asian supermarket numbers by country -->
+        <section id="supermarket-comparison-section" class="mt-8 bg-white p-6 rounded-2xl shadow-lg">
+             <h2 class="text-2xl font-bold text-slate-700 mb-2">Overview of Asian Supermarket Numbers by Country</h2>
+             <p class="mt-4 text-slate-500 mb-4">This chart shows the estimated total number of Asian supermarkets for all countries in the report, with UK data fixed at the end for quick horizontal comparison.</p>
+            <div class="comparison-chart-container">
+                <canvas id="supermarket-comparison-chart"></canvas>
+            </div>
+        </section>
+
+        <!-- Original section for overview of Asian restaurant numbers by country -->
         <section id="restaurant-comparison-section" class="mt-8 bg-white p-6 rounded-2xl shadow-lg">
-             <h2 class="text-2xl font-bold text-slate-700 mb-2">Overview of Asian Restaurant Count by Country</h2>
-             <p class="mt-4 text-slate-500 mb-4">This chart displays the estimated total number of Asian restaurants for all countries in the report, with UK data fixed at the end for quick horizontal comparison.</p>
+             <h2 class="text-2xl font-bold text-slate-700 mb-2">Overview of Asian Restaurant Numbers by Country</h2>
+             <p class="mt-4 text-slate-500 mb-4">This chart shows the estimated total number of Asian restaurants for all countries in the report, with UK data fixed at the end for quick horizontal comparison.</p>
             <div class="comparison-chart-container">
                 <canvas id="restaurant-comparison-chart"></canvas>
             </div>
         </section>
 
-        <!-- New section for Overview of Asian Food Wholesaler Count by Country -->
+        <!-- Original section for overview of total Asian food wholesalers by country -->
         <section id="wholesaler-comparison-section" class="mt-8 bg-white p-6 rounded-2xl shadow-lg">
-             <h2 class="text-2xl font-bold text-slate-700 mb-2">Overview of Asian Food Wholesaler Count by Country</h2>
-             <p class="mt-4 text-slate-500 mb-4">This chart displays the estimated total number of Asian food wholesalers for all countries in the report, with UK data fixed at the end for quick horizontal comparison.</p>
+             <h2 class="text-2xl font-bold text-slate-700 mb-2">Overview of Total Asian Food Wholesalers by Country</h2>
+             <p class="mt-4 text-slate-500 mb-4">This chart shows the estimated total number of Asian food wholesalers for all countries in the report, with UK data fixed at the end for quick horizontal comparison.</p>
             <div class="comparison-chart-container">
                 <canvas id="wholesaler-comparison-chart"></canvas>
             </div>
@@ -133,49 +143,50 @@
     </div>
 
     <footer class="text-center p-4 mt-8 text-sm text-slate-500">
-        <p>Data Source: EU Asian Immigrant - Supermarket - Restaurant Count Overview Report. Charts and data are for reference only.</p>
+        <p>Data Source: EU Asian Immigrant - Supermarket - Restaurant Numbers Overview Report. Charts and data are for reference only.</p>
     </footer>
 
     <script>
         const reportData = [
-            { country: "Germany", totalPop: 83.78, immigrantPop: 5.44, immigrantRatio: 6.5, sources: "Turkey (2.1%), China (1.2%), Vietnam (0.9%), Other (2.3%), Taiwan(<0.05%)", characteristics: "Western Europe, industrial hub; diet mainly meat and potatoes, such as German sausage, pork knuckle. Strong beer culture.", supermarkets: ["Go Asia (approx. 63 stores)", "Vinh‑Loi Asien Supermarkt (approx. 5 stores)", "Eurumart (Korean online delivery)", "Ochama JD (online delivery)", "Berlin, approx. 95", "Munich, approx. 48", "Hamburg, approx. 33", "Frankfurt, approx. 28"], wholesalers: ["DeLong GmbH", "Asia Express Food GmbH", "Transfood GmbH"], totalWholesalers: 20, restaurants: { "Chinese": [4000, 6000], "Asian Buffet": [1000, 1500], "Japanese": [2000, 3000], "Thai": [1000, 1500], "Vietnamese": [1000, 1500], "Other": [800, 1200] } },
-            { country: "France", totalPop: 65.27, immigrantPop: 4.57, immigrantRatio: 7.0, sources: "Vietnam (1.8%), China (0.8%), Cambodia/Laos (1.2%), Other (3.2%), Taiwan(<0.05%)", characteristics: "Western Europe, former colonial background; refined diet, emphasizing ingredient quality and cooking techniques, such as foie gras, macarons.", supermarkets: ["Tang Frères (approx. 22 stores)", "Paris Store (approx. 21 stores)", "Le Carré Asian (online delivery)", "Ochama JD (online delivery)", "Paris, approx. 116", "Lyon, approx. 15"], wholesalers: ["K-Commerce", "Asia Food Import", "Hapi S.A.S."], totalWholesalers: 15, restaurants: { "Chinese": [3000, 4000], "Asian Buffet": [500, 800], "Japanese": [2000, 3000], "Thai": [800, 1200], "Vietnamese": [800, 1200], "Other": [300, 600] } },
-            { country: "Italy", totalPop: 60.46, immigrantPop: 2.54, immigrantRatio: 4.2, sources: "Philippines (1.1%), China (0.9%), India (0.7%), Other (1.5%), Taiwan(<0.1%)", characteristics: "Southern Europe, manufacturing intensive; diet mainly pasta and pizza, such as Italian pasta, tiramisu.", supermarkets: ["Milan, approx. 45", "Rome, approx. 30", "Kathay.it (online delivery)", "8TTO MARKET (online delivery)"], wholesalers: ["Asiantrade S.r.l.", "Union Trade S.r.l.", "Asia Food S.r.l."], totalWholesalers: 12, restaurants: { "Chinese": [3000, 4000], "Asian Buffet": [600, 1000], "Japanese": [2500, 3500], "Thai": [200, 400], "Vietnamese": [100, 200], "Other": [300, 600] } },
-            { country: "Spain", totalPop: 46.75, immigrantPop: 1.64, immigrantRatio: 3.5, sources: "China (1.1%), Philippines (1.0%), Pakistan (0.6%), Other (0.8%), Taiwan(<0.1%)", characteristics: "Southern Europe, service industry dominated; diverse diet, mostly seafood and meat dishes, such as paella, Tapas.", supermarkets: ["Barcelona, approx. 50", "Madrid, approx. 45", "Oriental Mart (online delivery)", "Tian Tian Go Asian Food Supermarket (online delivery)"], wholesalers: ["Oriental Market", "Asia Food Express", "Union Alimentaria"], totalWholesalers: 10, restaurants: { "Chinese": [2500, 3500], "Asian Buffet": [500, 800], "Japanese": [3000, 4000], "Thai": [400, 600], "Vietnamese": [100, 200], "Other": [300, 500] } },
-            { country: "Netherlands", totalPop: 17.13, immigrantPop: 1.37, immigrantRatio: 8.0, sources: "Turkey (2.3%), Indonesia (1.5%), China (0.7%), Other (3.5%), Taiwan(<0.05%)", characteristics: "Western Europe, trade hub; simple diet, mainly dairy products and vegetables, such as stroopwafels, cheese.", supermarkets: ["Amazing Oriental (approx. 25 stores)", "Ochama JD (online delivery)", "Asia Express Food (online delivery)", "Amsterdam, approx. 25", "The Hague, approx. 13"], wholesalers: ["Amazing Oriental Wholesale", "Asia Express Food B.V.", "Lucky Oriental Food"], totalWholesalers: 10, restaurants: { "Chinese": [1500, 2000], "Asian Buffet": [400, 600], "Japanese": [1000, 1300], "Indonesian": [500, 800], "Thai": [300, 500], "Vietnamese": [80, 150], "Other": [200, 400] } },
-            { country: "Sweden", totalPop: 10.10, immigrantPop: 0.61, immigrantRatio: 6.0, sources: "Syria/Iraq (3.2%), China (0.5%), Thailand (0.4%), Other (1.9%), Taiwan(<0.05%)", characteristics: "Northern Europe, refugee recipient; diet mainly fish, meatballs and berries, such as Swedish meatballs, herring.", supermarkets: ["Zurich, approx. 19", "Lausanne, approx. 17", "Geneva, approx. 15", "Asia Markt (online delivery)"], wholesalers: ["Oriental Foods AB", "Svenska Orient Livsmedel", "Asia Trade Sweden"], totalWholesalers: 7, restaurants: { "Chinese": [600, 800], "Asian Buffet": [300, 500], "Japanese": [800, 1000], "Thai": [400, 600], "Vietnamese": [50, 150], "Other": [400, 600] } },
-            { country: "Belgium", totalPop: 11.59, immigrantPop: 0.58, immigrantRatio: 5.0, sources: "Turkey (1.8%), India (0.9%), China (0.6%), Other (1.7%), Taiwan(<0.05%)", characteristics: "Western Europe, EU headquarters; known for fries, chocolate and beer, such as Belgian fries, waffles.", supermarkets: ["Brussels, approx. 25", "Antwerp, approx. 17", "Ochama JD (online delivery)"], wholesalers: ["FoodAsia Belgium", "Kam Yuen", "Oriental Food Express"], totalWholesalers: 7, restaurants: { "Chinese": [1500, 2000], "Asian Buffet": [300, 500], "Japanese": [800, 1200], "Thai": [300, 500], "Vietnamese": [200, 400], "Other": [200, 400] } },
-            { country: "Austria", totalPop: 9.01, immigrantPop: 0.50, immigrantRatio: 5.5, sources: "Turkey(2.5%), Syria (1.2%), China (0.4%), Other (1.4%), Taiwan(<0.05%)", characteristics: "Central Europe, high refugee proportion; diet mainly pastries and meat dishes, such as Wiener Schnitzel, Sacher Torte.", supermarkets: ["Vienna, approx. 45"], wholesalers: ["ATCO", "Asia Food Express Austria", "Oriental Markt Wien"], totalWholesalers: 6, restaurants: { "Chinese": [800, 1200], "Asian Buffet": [200, 400], "Japanese": [500, 800], "Thai": [250, 350], "Vietnamese": [150, 250], "Other": [200, 350] } },
-            { country: "Poland", totalPop: 37.85, immigrantPop: 0.30, immigrantRatio: 0.8, sources: "Vietnam (0.4%), China (0.2%), Other (0.2%), Taiwan(<0.05%)", characteristics: "Eastern Europe, emerging immigrant destination; diet mainly dumplings, soups and meat, such as Polish dumplings, borscht.", supermarkets: ["Warsaw, approx. 20"], wholesalers: ["World of Asia", "Asia Foods Poland", "Oriental Market Poland"], totalWholesalers: 6, restaurants: { "Chinese": [800, 1200], "Asian Buffet": [200, 400], "Japanese": [700, 1000], "Thai": [200, 350], "Vietnamese": [200, 350], "Other": [150, 300] } },
-            { country: "Portugal", totalPop: 10.27, immigrantPop: 0.26, immigrantRatio: 2.5, sources: "India (0.8%), China (0.6%), Bangladesh (0.5%), Other (0.6%), Taiwan(<0.05%)", characteristics: "Southern Europe, Portuguese-speaking immigrant and trade hub; known for seafood and egg tarts, such as pastel de nata, grilled sardines.", supermarkets: ["Lisbon, 20", "Porto, 10"], wholesalers: ["Oriental Foods Portugal", "Asia Market Portugal"], totalWholesalers: 4, restaurants: { "Chinese": [200, 400], "Asian Buffet": [80, 150], "Japanese": [250, 450], "Thai": [80, 150], "Vietnamese": [50, 100], "Other": [80, 150] } },
-            { country: "Denmark", totalPop: 5.79, immigrantPop: 0.24, immigrantRatio: 4.2, sources: "Turkey (1.0%), Pakistan (0.9%), China (0.4%), Other (1.9%), Taiwan(<0.05%)", characteristics: "Northern Europe, coexisting labor and refugees; diet mainly open sandwiches and pastries, such as Danish pastry.", supermarkets: ["Copenhagen, approx. 46"], wholesalers: ["Asian Food Supply A/S", "Oriental Food Denmark"], totalWholesalers: 4, restaurants: { "Chinese": [300, 500], "Asian Buffet": [100, 200], "Japanese": [300, 500], "Thai": [150, 250], "Vietnamese": [50, 100], "Other": [100, 200] } },
-            { country: "Greece", totalPop: 10.46, immigrantPop: 0.21, immigrantRatio: 2.0, sources: "Pakistan (0.8%), Bangladesh (0.6%), China (0.3%), Other (0.3%), Taiwan(<0.05%)", characteristics: "Southern Europe, increasing Asian immigrants; diet mainly Mediterranean flavors, such as Greek salad, souvlaki.", supermarkets: ["Athens, approx. 10–12"], wholesalers: ["Asiana Ltd", "Oriental Foods Greece"], totalWholesalers: 4, restaurants: { "Chinese": [200, 350], "Asian Buffet": [50, 100], "Japanese": [150, 250], "Thai": [80, 150], "Vietnamese": [20, 50], "Other": [50, 100] } },
-            { country: "Czech Republic", totalPop: 10.69, immigrantPop: 0.21, immigrantRatio: 2.0, sources: "Vietnam (1.4%), China (0.3%), Other (0.3%), Taiwan(<0.05%)", characteristics: "Central Europe, large Vietnamese community; diet mainly roasted meat and stews, such as roasted pork knuckle, Czech dumplings.", supermarkets: ["Prague, approx. 25"], wholesalers: ["Shin s.r.o. (Shinfood)", "Asia Food CZ"], totalWholesalers: 4, restaurants: { "Chinese": [250, 400], "Asian Buffet": [80, 150], "Japanese": [200, 350], "Thai": [80, 150], "Vietnamese": [200, 350], "Other": [50, 100] } },
-            { country: "Ireland", totalPop: 5.03, immigrantPop: 0.20, immigrantRatio: 4.0, sources: "India (1.5%), Philippines (1.0%), China (0.5%), Other (1.0%), Taiwan(<0.05%)", characteristics: "Western Europe, technology and healthcare oriented; diet mainly stews and potatoes, such as Irish stew, mashed potatoes.", supermarkets: ["Cork, approx. 12", "Dublin, approx. 7"], wholesalers: ["Manning Impex", "Oriental Food Ireland"], totalWholesalers: 4, restaurants: { "Chinese": [300, 500], "Asian Buffet": [80, 150], "Japanese": [250, 400], "Thai": [150, 250], "Vietnamese": [30, 80], "Other": [80, 150] } },
-            { country: "Hungary", totalPop: 9.66, immigrantPop: 0.12, immigrantRatio: 1.2, sources: "China (0.5%), Vietnam (0.3%), Other (0.4%), Taiwan(<0.05%)", characteristics: "Eastern Europe, investment immigration; diet mainly stews and spicy dishes, such as Hungarian goulash.", supermarkets: ["Budapest, approx. 20"], wholesalers: ["Asia Food Hungary", "Oriental Market Hungary"], totalWholesalers: 3, restaurants: { "Chinese": [200, 350], "Asian Buffet": [50, 100], "Japanese": [150, 250], "Thai": [80, 150], "Vietnamese": [80, 150], "Other": [50, 100] } },
-            { country: "Finland", totalPop: 5.56, immigrantPop: 0.11, immigrantRatio: 2.0, sources: "China (0.5%), Iraq/Syria (1.1%), Other (0.4%), Taiwan(<0.05%)", characteristics: "Northern Europe, technology and social welfare state; diet mainly fish and berries, such as Karelian pasty.", supermarkets: ["Helsinki, approx. 15"], wholesalers: ["Oy Golden Crop Ab Asian Market", "Oriental Food Finland"], totalWholesalers: 3, restaurants: { "Chinese": [150, 250], "Asian Buffet": [50, 100], "Japanese": [150, 250], "Thai": [80, 150], "Vietnamese": [30, 80], "Other": [50, 100] } },
-            { country: "Luxembourg", totalPop: 0.67, immigrantPop: 0.04, immigrantRatio: 5.5, sources: "China (1.0%), India (1.2%), Other (3.3%), Taiwan(<0.05%)", characteristics: "Western Europe, small country with high income; diet influenced by French and German cuisine, such as Luxembourgish sausages.", supermarkets: ["Luxembourg City, approx. 5"], wholesalers: ["Asia Market Luxembourg"], totalWholesalers: 2, restaurants: { "Chinese": [50, 100], "Asian Buffet": [20, 40], "Japanese": [30, 60], "Thai": [20, 40], "Vietnamese": [10, 20], "Other": [10, 20] } },
-            { country: "Malta", totalPop: 0.52, immigrantPop: 0.02, immigrantRatio: 4.5, sources: "India (2.0%), Philippines (1.0%), Other (1.5%), Taiwan(<0.05%)", characteristics: "Mediterranean island nation, English widely spoken; diet blends Mediterranean flavors, such as rabbit stew, Pastizzi.", supermarkets: ["Valletta, approx. 6"], wholesalers: ["Oriental Food Malta"], totalWholesalers: 2, restaurants: { "Chinese": [20, 40], "Asian Buffet": [10, 20], "Japanese": [15, 30], "Thai": [10, 20], "Vietnamese": [5, 10], "Other": [5, 10] } },
-            { country: "Slovenia", totalPop: 2.11, immigrantPop: 0.02, immigrantRatio: 0.8, sources: "China (0.3%), India/Other (0.5%), Taiwan(<0.05%)", characteristics: "Central Europe, trade exchange point; diet influenced by Austrian and Italian cuisine, such as sausages, stews.", supermarkets: ["Ljubljana, approx. 6"], wholesalers: ["Asia Food Slovenia"], totalWholesalers: 2, restaurants: { "Chinese": [20, 40], "Asian Buffet": [5, 15], "Japanese": [10, 20], "Thai": [5, 15], "Vietnamese": [2, 5], "Other": [5, 10] } },
-            { country: "Estonia", totalPop: 1.33, immigrantPop: 0.01, immigrantRatio: 1.0, sources: "China (0.3%), India/Bangladesh (0.3%), Other (0.4%), Taiwan(<0.05%)", characteristics: "Baltic state, technological development; diet mainly black bread and pork, such as blood sausage.", supermarkets: ["Tallinn, 5–6"], wholesalers: ["A&A Asian Food Store (wholesale services)"], totalWholesalers: 2, restaurants: { "Chinese": [20, 40], "Asian Buffet": [5, 15], "Japanese": [10, 20], "Thai": [5, 15], "Vietnamese": [2, 5], "Other": [5, 10] } },
-            { country: "Lithuania", totalPop: 2.83, immigrantPop: 0.02, immigrantRatio: 0.7, sources: "China (0.3%), India (0.2%), Other (0.2%), Taiwan(<0.05%)", characteristics: "Baltic state; diet mainly potatoes and meat, such as potato dumplings.", supermarkets: ["Vilnius, approx. 6"], wholesalers: ["Oriental Food Lithuania"], totalWholesalers: 2, restaurants: { "Chinese": [20, 40], "Asian Buffet": [5, 15], "Japanese": [10, 20], "Thai": [5, 15], "Vietnamese": [2, 5], "Other": [5, 10] } },
-            { country: "Latvia", totalPop: 1.89, immigrantPop: 0.01, immigrantRatio: 0.6, sources: "China (0.2%), Vietnam (0.2%), Other (0.2%), Taiwan(<0.05%)", characteristics: "Baltic state; diet mainly black bread and dairy products, such as Latvian black bread.", supermarkets: ["Riga, approx. 5"], wholesalers: ["SIA Cesars"], totalWholesalers: 2, restaurants: { "Chinese": [20, 40], "Asian Buffet": [5, 15], "Japanese": [10, 20], "Thai": [5, 15], "Vietnamese": [2, 5], "Other": [5, 10] } },
-            { country: "Croatia", totalPop: 3.87, immigrantPop: 0.02, immigrantRatio: 0.6, sources: "China (0.2%), Philippines (0.2%), Other (0.2%), Taiwan(<0.05%)", characteristics: "Southern Europe, tourism dominated; diet mainly seafood and Mediterranean flavors, such as Peka。", supermarkets: ["Zagreb, approx. 7"], wholesalers: ["Panasia"], totalWholesalers: 2, restaurants: { "Chinese": [20, 40], "Asian Buffet": [5, 15], "Japanese": [10, 20], "Thai": [5, 15], "Vietnamese": [2, 5], "Other": [5, 10] } },
-            { country: "Bulgaria", totalPop: 6.46, immigrantPop: 0.04, immigrantRatio: 0.6, sources: "China (0.2%), Vietnam/Other (0.4%), Taiwan(<0.05%)", characteristics: "Southeast Europe, industrial transformation; diet mainly dairy products and vegetables, such as Bulgarian yogurt.", supermarkets: ["Sofia, approx. 8"], wholesalers: ["Asia Food Bulgaria"], totalWholesalers: 2, restaurants: { "Chinese": [30, 60], "Asian Buffet": [10, 20], "Japanese": [20, 40], "Thai": [10, 20], "Vietnamese": [5, 10], "Other": [10, 20] } },
-            { country: "Romania", totalPop: 19.24, immigrantPop: 0.10, immigrantRatio: 0.5, sources: "China (0.2%), Turkey* (0.1%), Other (0.2%), Taiwan(<0.05%)", characteristics: "Eastern Europe, sparse Asian population; diet mainly polenta and stews, such as sarmale.", supermarkets: ["Bucharest, approx. 14"], wholesalers: ["Asia Food Romania"], totalWholesalers: 2, restaurants: { "Chinese": [80, 150], "Asian Buffet": [20, 40], "Japanese": [50, 100], "Thai": [30, 60], "Vietnamese": [10, 20], "Other": [20, 40] } },
-            { country: "Slovakia", totalPop: 5.43, immigrantPop: 0.03, immigrantRatio: 0.5, sources: "Vietnam (0.3%), China (0.1%), Other (0.1%), Taiwan(<0.05%)", characteristics: "Central Europe, small immigrant group; diet mainly potatoes and cheese, such as bryndzové halušky.", supermarkets: ["Bratislava, approx. 6"], wholesalers: ["Asia Food Slovakia"], totalWholesalers: 2, restaurants: { "Chinese": [30, 60], "Asian Buffet": [10, 20], "Japanese": [20, 40], "Thai": [10, 20], "Vietnamese": [10, 20], "Other": [10, 20] } },
-            { country: "United Kingdom (Non-EU)", totalPop: 67.6, immigrantPop: 5.76, immigrantRatio: 8.6, sources: "India (2.9%), Pakistan (2.5%), Bangladesh (1.0%), China (0.8%), Other (1.5%), Taiwan(<0.01%)", characteristics: "Western Europe, multicultural hub; diet mainly fish and chips, roasts and English breakfast.", supermarkets: [
+            { country: "Germany", totalPop: 83.78, immigrantPop: 5.44, immigrantRatio: 6.5, sources: "Turkey (2.1%), China (1.2%), Vietnam (0.9%), Other (2.3%), Taiwan(<0.05%)", characteristics: "Western Europe, industrial hub; diet mainly meat and potatoes, such as German sausage, pork knuckle. Strong beer culture.", supermarkets: ["Go Asia Oriental Supermarket (approx. 63 branches)", "Vinh‑Loi Asien Supermarkt (approx. 5 branches)", "Eurumart (Korean online delivery)", "Ochama JD (online delivery)", "Berlin, approx. 95", "Munich, approx. 48", "Hamburg, approx. 33", "Frankfurt, approx. 28"], wholesalers: ["JFC", "DeLong GmbH", "Transfood GmbH"], totalWholesalers: 20, manualSupermarketCount: 208, restaurants: { "Chinese": [4000, 6000], "Asian Buffet": [1000, 1500], "Japanese": [2000, 3000], "Thai": [1000, 1500], "Vietnamese": [1000, 1500], "Other": [800, 1200] } },
+            { country: "France", totalPop: 65.27, immigrantPop: 4.57, immigrantRatio: 7.0, sources: "Vietnam (1.8%), China (0.8%), Cambodia/Laos (1.2%), Other (3.2%), Taiwan(<0.05%)", characteristics: "Western Europe, former colonial background; refined cuisine, focusing on ingredient quality and cooking techniques, such as foie gras, macarons.", supermarkets: ["Tang Frères Supermarket (approx. 22 branches)", "Paris Store (approx. 21 branches)", "Le Carré Asian (online delivery)", "Ochama JD (online delivery)", "Paris, approx. 116", "Lyon, approx. 15"], wholesalers: ["NOS AMIS", "Foodex (formerly Asia Food Import)"], totalWholesalers: 15, manualSupermarketCount: 131, restaurants: { "Chinese": [3000, 4000], "Asian Buffet": [500, 800], "Japanese": [2000, 3000], "Thai": [800, 1200], "Vietnamese": [800, 1200], "Other": [300, 600] } },
+            { country: "Italy", totalPop: 60.46, immigrantPop: 2.54, immigrantRatio: 4.2, sources: "Philippines (1.1%), China (0.9%), India (0.7%), Other (1.5%), Taiwan(<0.1%)", characteristics: "Southern Europe, dense manufacturing; diet mainly pasta and pizza, such as Italian pasta, tiramisu.", supermarkets: ["Milan, approx. 45", "Rome, approx. 30", "Kathay.it (online delivery)", "8TTO MARKET (online delivery)"], wholesalers: ["Asiantrade S.r.l.", "Union Trade S.r.l.", "Todayfood (Ingrosso Alimentare Asiatico)"], totalWholesalers: 12, manualSupermarketCount: 75, restaurants: { "Chinese": [3000, 4000], "Asian Buffet": [600, 1000], "Japanese": [2500, 3500], "Thai": [200, 400], "Vietnamese": [100, 200], "Other": [300, 600] } },
+            { country: "Spain", totalPop: 46.75, immigrantPop: 1.64, immigrantRatio: 3.5, sources: "China (1.1%), Philippines (1.0%), Pakistan (0.6%), Other (0.8%), Taiwan(<0.1%)", characteristics: "Southern Europe, service-oriented; diverse cuisine, mostly seafood and meat dishes, such as Spanish paella, Tapas.", supermarkets: ["Barcelona, approx. 50", "Madrid, approx. 45", "Oriental Mart (online delivery)", "Tian Tian Go Asian Food Supermarket (online delivery)"], wholesalers: ["EMB FOOD", "Asia Food Express", "Union Alimentaria"], totalWholesalers: 10, manualSupermarketCount: 95, restaurants: { "Chinese": [2500, 3500], "Asian Buffet": [500, 800], "Japanese": [3000, 4000], "Thai": [400, 600], "Vietnamese": [100, 200], "Other": [300, 500] } },
+            { country: "Netherlands", totalPop: 17.13, immigrantPop: 1.37, immigrantRatio: 8.0, sources: "Turkey (2.3%), Indonesia (1.5%), China (0.7%), Other (3.5%), Taiwan(<0.05%)", characteristics: "Western Europe, trade hub; simple diet, mainly dairy products and vegetables, such as Dutch waffles, cheese.", supermarkets: ["Amazing Oriental (approx. 25 branches)", "Ochama JD (online delivery)", "Asia Express Food (online delivery)", "Amsterdam, approx. 25", "The Hague, approx. 13"], wholesalers: ["Amazing Oriental Wholesale", "Asia Express Food B.V.", "Lucky Oriental Food"], totalWholesalers: 10, manualSupermarketCount: 55, restaurants: { "Chinese": [1500, 2000], "Asian Buffet": [400, 600], "Japanese": [1000, 1300], "Indonesian": [500, 800], "Thai": [300, 500], "Vietnamese": [80, 150], "Other": [200, 400] } },
+            { country: "Sweden", totalPop: 10.10, immigrantPop: 0.61, immigrantRatio: 6.0, sources: "Syria/Iraq (3.2%), China (0.5%), Thailand (0.4%), Other (1.9%), Taiwan(<0.05%)", characteristics: "Northern Europe, refugee recipient; diet mainly fish, meatballs, and berries, such as Swedish meatballs, herring.", supermarkets: ["Zurich, approx. 19", "Lausanne, approx. 17", "Geneva, approx. 15", "Asia Markt (online delivery)"], wholesalers: ["Oriental Foods AB", "Svenska Orient Livsmedel", "Asia Trade Sweden"], totalWholesalers: 7, manualSupermarketCount: 51, restaurants: { "Chinese": [600, 800], "Asian Buffet": [300, 500], "Japanese": [800, 1000], "Thai": [400, 600], "Vietnamese": [50, 150], "Other": [400, 600] } },
+            { country: "Belgium", totalPop: 11.59, immigrantPop: 0.58, immigrantRatio: 5.0, sources: "Turkey (1.8%), India (0.9%), China (0.6%), Other (1.7%), Taiwan(<0.05%)", characteristics: "Western Europe, EU headquarters; famous for fries, chocolate, and beer, such as Belgian fries, waffles.", supermarkets: ["Brussels, approx. 25", "Antwerp, approx. 17", "Ochama JD (online delivery)"], wholesalers: ["FoodAsia Belgium", "Kam Yuen", "Oriental Food Express"], totalWholesalers: 7, manualSupermarketCount: 42, restaurants: { "Chinese": [1500, 2000], "Asian Buffet": [300, 500], "Japanese": [800, 1200], "Thai": [300, 500], "Vietnamese": [200, 400], "Other": [200, 400] } },
+            { country: "Austria", totalPop: 9.01, immigrantPop: 0.50, immigrantRatio: 5.5, sources: "Turkey (2.5%), Syria (1.2%), China (0.4%), Other (1.4%), Taiwan(<0.05%)", characteristics: "Central Europe, high refugee proportion; diet mainly pastries and meat dishes, such as Vienna schnitzel, Sacher cake.", supermarkets: ["Vienna, approx. 45"], wholesalers: ["ATCO", "Asia Food Express Austria", "Oriental Markt Wien"], totalWholesalers: 6, manualSupermarketCount: 45, restaurants: { "Chinese": [800, 1200], "Asian Buffet": [200, 400], "Japanese": [500, 800], "Thai": [250, 350], "Vietnamese": [150, 250], "Other": [200, 350] } },
+            { country: "Poland", totalPop: 37.85, immigrantPop: 0.30, immigrantRatio: 0.8, sources: "Vietnam (0.4%), China (0.2%), Other (0.2%), Taiwan(<0.05%)", characteristics: "Eastern Europe, emerging immigrant destination; diet mainly dumplings, soup, and meat, such as Polish dumplings, borscht.", supermarkets: ["Warsaw, approx. 20"], wholesalers: ["World of Asia", "Asia Foods Poland", "Oriental Market Poland"], totalWholesalers: 6, manualSupermarketCount: 20, restaurants: { "Chinese": [800, 1200], "Asian Buffet": [200, 400], "Japanese": [700, 1000], "Thai": [200, 350], "Vietnamese": [200, 350], "Other": [150, 300] } },
+            { country: "Portugal", totalPop: 10.27, immigrantPop: 0.26, immigrantRatio: 2.5, sources: "India (0.8%), China (0.6%), Bangladesh (0.5%), Other (0.6%), Taiwan(<0.05%)", characteristics: "Southern Europe, Portuguese-speaking immigrant and trade hub; famous for seafood and egg tarts, such as Portuguese egg tarts, grilled sardines.", supermarkets: ["Lisbon, 20", "Porto, 10"], wholesalers: ["Oriental Foods Portugal", "Asia Market Portugal"], totalWholesalers: 4, manualSupermarketCount: 30, restaurants: { "Chinese": [200, 400], "Asian Buffet": [80, 150], "Japanese": [250, 450], "Thai": [80, 150], "Vietnamese": [50, 100], "Other": [80, 150] } },
+            { country: "Denmark", totalPop: 5.79, immigrantPop: 0.24, immigrantRatio: 4.2, sources: "Turkey (1.0%), Pakistan (0.9%), China (0.4%), Other (1.9%), Taiwan(<0.05%)", characteristics: "Northern Europe, labor and refugee coexistence; diet mainly open-faced sandwiches and pastries, such as Danish pastry.", supermarkets: ["Copenhagen, approx. 46"], wholesalers: ["Asian Food Supply A/S", "Oriental Food Denmark"], totalWholesalers: 4, manualSupermarketCount: 46, restaurants: { "Chinese": [300, 500], "Asian Buffet": [100, 200], "Japanese": [300, 500], "Thai": [150, 250], "Vietnamese": [50, 100], "Other": [100, 200] } },
+            { country: "Greece", totalPop: 10.46, immigrantPop: 0.21, immigrantRatio: 2.0, sources: "Pakistan (0.8%), Bangladesh (0.6%), China (0.3%), Other (0.3%), Taiwan(<0.05%)", characteristics: "Southern Europe, increasing Asian immigrants; diet mainly Mediterranean flavors, such as Greek salad, souvlaki.", supermarkets: ["Athens, approx. 10–12"], wholesalers: ["Asiana Ltd", "Oriental Foods Greece"], totalWholesalers: 4, manualSupermarketCount: 11, restaurants: { "Chinese": [200, 350], "Asian Buffet": [50, 100], "Japanese": [150, 250], "Thai": [80, 150], "Vietnamese": [20, 50], "Other": [50, 100] } },
+            { country: "Czech Republic", totalPop: 10.69, immigrantPop: 0.21, immigrantRatio: 2.0, sources: "Vietnam (1.4%), China (0.3%), Other (0.3%), Taiwan(<0.05%)", characteristics: "Central Europe, large Vietnamese community; diet mainly roasted meat and stews, such as roasted pork knuckle, Czech dumplings.", supermarkets: ["Prague, approx. 25"], wholesalers: ["Shin s.r.o. (Shinfood)", "Asia Food CZ"], totalWholesalers: 4, manualSupermarketCount: 25, restaurants: { "Chinese": [250, 400], "Asian Buffet": [80, 150], "Japanese": [200, 350], "Thai": [80, 150], "Vietnamese": [200, 350], "Other": [50, 100] } },
+            { country: "Ireland", totalPop: 5.03, immigrantPop: 0.20, immigrantRatio: 4.0, sources: "India (1.5%), Philippines (1.0%), China (0.5%), Other (1.0%), Taiwan(<0.05%)", characteristics: "Western Europe, tech and medical oriented; diet mainly stews and potatoes, such as Irish stew, mashed potatoes.", supermarkets: ["Cork, approx. 12", "Dublin, approx. 7"], wholesalers: ["Manning Impex", "Oriental Food Ireland"], totalWholesalers: 4, manualSupermarketCount: 19, restaurants: { "Chinese": [300, 500], "Asian Buffet": [80, 150], "Japanese": [250, 400], "Thai": [150, 250], "Vietnamese": [30, 80], "Other": [80, 150] } },
+            { country: "Hungary", totalPop: 9.66, immigrantPop: 0.12, immigrantRatio: 1.2, sources: "China (0.5%), Vietnam (0.3%), Other (0.4%), Taiwan(<0.05%)", characteristics: "Eastern Europe, investment immigration; diet mainly stews and spicy dishes, such as Hungarian goulash.", supermarkets: ["Budapest, approx. 20"], wholesalers: ["Asia Food Hungary", "Oriental Market Hungary"], totalWholesalers: 3, manualSupermarketCount: 20, restaurants: { "Chinese": [200, 350], "Asian Buffet": [50, 100], "Japanese": [150, 250], "Thai": [80, 150], "Vietnamese": [80, 150], "Other": [50, 100] } },
+            { country: "Finland", totalPop: 5.56, immigrantPop: 0.11, immigrantRatio: 2.0, sources: "China (0.5%), Iraq/Syria (1.1%), Other (0.4%), Taiwan(<0.05%)", characteristics: "Northern Europe, tech and social welfare country; diet mainly fish and berries, such as Karelian pasty.", supermarkets: ["Helsinki, approx. 15"], wholesalers: ["Oy Golden Crop Ab Asian Market", "Oriental Food Finland"], totalWholesalers: 3, manualSupermarketCount: 15, restaurants: { "Chinese": [150, 250], "Asian Buffet": [50, 100], "Japanese": [150, 250], "Thai": [80, 150], "Vietnamese": [30, 80], "Other": [50, 100] } },
+            { country: "Luxembourg", totalPop: 0.67, immigrantPop: 0.04, immigrantRatio: 5.5, sources: "China (1.0%), India (1.2%), Other (3.3%), Taiwan(<0.05%)", characteristics: "Western Europe, small country with high income; cuisine influenced by French and German, such as Luxembourg sausage.", supermarkets: ["Luxembourg City, approx. 5"], wholesalers: ["Asia Market Luxembourg"], totalWholesalers: 2, manualSupermarketCount: 5, restaurants: { "Chinese": [50, 100], "Asian Buffet": [20, 40], "Japanese": [30, 60], "Thai": [20, 40], "Vietnamese": [10, 20], "Other": [10, 20] } },
+            { country: "Malta", totalPop: 0.52, immigrantPop: 0.02, immigrantRatio: 4.5, sources: "India (2.0%), Philippines (1.0%), Other (1.5%), Taiwan(<0.05%)", characteristics: "Mediterranean island nation, English widely spoken; cuisine blends Mediterranean flavors, such as rabbit stew, Pastizzi.", supermarkets: ["Valletta, approx. 6"], wholesalers: ["Oriental Food Malta"], totalWholesalers: 2, manualSupermarketCount: 6, restaurants: { "Chinese": [20, 40], "Asian Buffet": [10, 20], "Japanese": [15, 30], "Thai": [10, 20], "Vietnamese": [5, 10], "Other": [5, 10] } },
+            { country: "Slovenia", totalPop: 2.11, immigrantPop: 0.02, immigrantRatio: 0.8, sources: "China (0.3%), India/Other (0.5%), Taiwan(<0.05%)", characteristics: "Central Europe, trade exchange point; cuisine influenced by Austria and Italy, such as sausage, stews.", supermarkets: ["Ljubljana, approx. 6"], wholesalers: ["Asia Food Slovenia"], totalWholesalers: 2, manualSupermarketCount: 6, restaurants: { "Chinese": [20, 40], "Asian Buffet": [5, 15], "Japanese": [10, 20], "Thai": [5, 15], "Vietnamese": [2, 5], "Other": [5, 10] } },
+            { country: "Estonia", totalPop: 1.33, immigrantPop: 0.01, immigrantRatio: 1.0, sources: "China (0.3%), India/Bangladesh (0.3%), Other (0.4%), Taiwan(<0.05%)", characteristics: "Baltic country, tech development; diet mainly black bread and pork, such as blood sausage.", supermarkets: ["Tallinn, 5–6"], wholesalers: ["A&A Asian Food Store (wholesale services)"], totalWholesalers: 2, manualSupermarketCount: 5.5, restaurants: { "Chinese": [20, 40], "Asian Buffet": [5, 15], "Japanese": [10, 20], "Thai": [5, 15], "Vietnamese": [2, 5], "Other": [5, 10] } },
+            { country: "Lithuania", totalPop: 2.83, immigrantPop: 0.02, immigrantRatio: 0.7, sources: "China (0.3%), India (0.2%), Other (0.2%), Taiwan(<0.05%)", characteristics: "Baltic country; diet mainly potatoes and meat, such as potato dumplings.", supermarkets: ["Vilnius, approx. 6"], wholesalers: ["Oriental Food Lithuania"], totalWholesalers: 2, manualSupermarketCount: 6, restaurants: { "Chinese": [20, 40], "Asian Buffet": [5, 15], "Japanese": [10, 20], "Thai": [5, 15], "Vietnamese": [2, 5], "Other": [5, 10] } },
+            { country: "Latvia", totalPop: 1.89, immigrantPop: 0.01, immigrantRatio: 0.6, sources: "China (0.2%), Vietnam (0.2%), Other (0.2%), Taiwan(<0.05%)", characteristics: "Baltic country; diet mainly black bread and dairy products, such as Latvian black bread.", supermarkets: ["Riga, approx. 5"], wholesalers: ["SIA Cesars"], totalWholesalers: 2, manualSupermarketCount: 5, restaurants: { "Chinese": [20, 40], "Asian Buffet": [5, 15], "Japanese": [10, 20], "Thai": [5, 15], "Vietnamese": [2, 5], "Other": [5, 10] } },
+            { country: "Croatia", totalPop: 3.87, immigrantPop: 0.02, immigrantRatio: 0.6, sources: "China (0.2%), Philippines (0.2%), Other (0.2%), Taiwan(<0.05%)", characteristics: "Southern Europe, tourism-dominated; diet mainly seafood and Mediterranean flavors, such as Peka.", supermarkets: ["Zagreb, approx. 7"], wholesalers: ["Panasia"], totalWholesalers: 2, manualSupermarketCount: 7, restaurants: { "Chinese": [20, 40], "Asian Buffet": [5, 15], "Japanese": [10, 20], "Thai": [5, 15], "Vietnamese": [2, 5], "Other": [5, 10] } },
+            { country: "Bulgaria", totalPop: 6.46, immigrantPop: 0.04, immigrantRatio: 0.6, sources: "China (0.2%), Vietnam/Other (0.4%), Taiwan(<0.05%)", characteristics: "Southeast Europe, industrial transformation; diet mainly dairy products and vegetables, such as Bulgarian yogurt.", supermarkets: ["Sofia, approx. 8"], wholesalers: ["Asia Food Bulgaria"], totalWholesalers: 2, manualSupermarketCount: 8, restaurants: { "Chinese": [30, 60], "Asian Buffet": [10, 20], "Japanese": [20, 40], "Thai": [10, 20], "Vietnamese": [5, 10], "Other": [10, 20] } },
+            { country: "Romania", totalPop: 19.24, immigrantPop: 0.10, immigrantRatio: 0.5, sources: "China (0.2%), Turkey* (0.1%), Other (0.2%), Taiwan(<0.05%)", characteristics: "Eastern Europe, sparse Asian population; diet mainly corn porridge and stews, such as Sarmale.", supermarkets: ["Bucharest, approx. 14"], wholesalers: ["Asia Food Romania"], totalWholesalers: 2, manualSupermarketCount: 14, restaurants: { "Chinese": [80, 150], "Asian Buffet": [20, 40], "Japanese": [50, 100], "Thai": [30, 60], "Vietnamese": [10, 20], "Other": [20, 40] } },
+            { country: "Slovakia", totalPop: 5.43, immigrantPop: 0.03, immigrantRatio: 0.5, sources: "Vietnam (0.3%), China (0.1%), Other (0.1%), Taiwan(<0.05%)", characteristics: "Central Europe, small immigrant group; diet mainly potatoes and cheese, such as bryndzové halušky.", supermarkets: ["Bratislava, approx. 6"], wholesalers: ["Asia Food Slovakia"], totalWholesalers: 2, manualSupermarketCount: 6, restaurants: { "Chinese": [30, 60], "Asian Buffet": [10, 20], "Japanese": [20, 40], "Thai": [10, 20], "Vietnamese": [10, 20], "Other": [10, 20] } }
+            ,
+            { country: "United Kingdom (Non-EU)", totalPop: 67.6, immigrantPop: 5.76, immigrantRatio: 8.6, sources: "India (2.9%), Pakistan (2.5%), Bangladesh (1.0%), China (0.8%), Other (1.5%), Taiwan(<0.01%)", characteristics: "Western Europe, multicultural center; diet mainly fish and chips, roasted meat, and English breakfast.", supermarkets: [
                 "Oseyo (largest Korean/Asian chain, approx. 14+ branches)",
-                "Longdan (multiple locations in London)",
-                "Tian Tian Market (multiple locations in London)",
+                "WingYip",
+                "Tian Tian Market (multiple in London)",
                 "Seoul Plaza (branches in London and other cities)",
                 "London, approx. 100-150",
                 "Manchester, approx. 20-30",
                 "Birmingham, approx. 15-25"
-            ], wholesalers: ["Manning Impex", "Wing Yip", "SeeWoo"], totalWholesalers: 40, restaurants: { "Chinese": [4000, 6000], "Asian Buffet": [1000, 1500], "Japanese": [1500, 2500], "Thai": [800, 1200], "Vietnamese": [300, 500], "Indian": [8000, 10000], "Pakistani": [3000, 4000], "Filipino": [100, 200], "Other": [1000, 1500] } }
+            ], wholesalers: ["JFC (UK)", "JF Foods", "Manning Impex"], totalWholesalers: 40, manualSupermarketCount: 200, restaurants: { "Chinese": [4000, 6000], "Asian Buffet": [1000, 1500], "Japanese": [1500, 2500], "Thai": [800, 1200], "Vietnamese": [300, 500], "Indian": [8000, 10000], "Pakistani": [3000, 4000], "Filipino": [100, 200], "Other": [1000, 1500] } }
         ];
 
-        let immigrantOriginChart, restaurantChart, comparisonChart, restaurantComparisonChart, wholesalerComparisonChart;
+        let immigrantOriginChart, restaurantChart, comparisonChart, supermarketComparisonChart, restaurantComparisonChart, wholesalerComparisonChart;
         
         const chartColors = {
             primary: 'rgba(79, 70, 229, 0.8)',
@@ -191,16 +202,20 @@
         // Color palette for immigrant origin and single country restaurant charts (maintaining original style)
         const palette = [chartColors.primary, chartColors.secondary, chartColors.accent, '#7dd3fc', '#facc15', '#fb923c', '#4ade80'];
 
-        // Define a new green color palette for the "Overview of Asian Restaurant Count by Country" chart, for a monochromatic theme
+        // Define a new green theme color palette for "Overview of Asian Restaurant Numbers by Country" chart, for single color
         const restaurantComparisonThemeColor = '#059669'; // Emerald 700 as a single theme color
 
-        // Define a new blue color palette for the "Overview of Asian Food Wholesaler Count by Country" chart
+        // Define a new blue theme color palette for "Overview of Total Asian Food Wholesalers by Country" chart
         const wholesalerComparisonThemeColor = '#3b82f6'; // Blue 500 as a single theme color
+
+        // Define a new theme color for "Overview of Asian Supermarket Numbers by Country" chart (e.g., orange)
+        const supermarketComparisonThemeColor = '#f97316'; // Orange 500 as a single theme color
+
 
         /**
          * Parses a source string to extract labels and values.
          * @param {string} sourceStr - Source string, e.g., "Turkey (2.1%), China (1.2%)"
-         * @returns {object} An object containing labels and values { labels: [], values: [] }
+         * @returns {object} Object containing labels and values { labels: [], values: [] }
          */
         function parseSourceString(sourceStr) {
             const sources = sourceStr.split(', ').map(s => s.trim());
@@ -222,11 +237,50 @@
         /**
          * Calculates the average of a numerical range.
          * @param {number[]} range - Numerical range array [min, max]
-         * @returns {number} The average value
+         * @returns {number} Average value
          */
         function getAverage(range) {
             if (!range || range.length !== 2) return 0;
             return (range[0] + range[1]) / 2;
+        }
+
+        /**
+         * Estimates the total number of Asian supermarkets in each country.
+         * @param {string[]} supermarketsArray - Array of strings containing supermarket information.
+         * @returns {number} Estimated total number of supermarkets.
+         */
+        function getEstimatedSupermarketCount(supermarketsArray) {
+            let total = 0;
+            supermarketsArray.forEach(item => {
+                // Try to match "approx. X branches" or "approx. X" or "X branches"
+                let match = item.match(/約(\d+)\+?間(?:門市|分店)?/);
+                if (!match) {
+                    match = item.match(/(\d+)\+?間(?:門市|分店)?/);
+                }
+                if (!match) {
+                    // Try to match "城市，約X間"
+                    match = item.match(/，約(\d+)\+?間/);
+                }
+                if (!match) {
+                    // Try to match "城市，X間"
+                    match = item.match(/，(\d+)\+?間/);
+                }
+                // Handle ranges like "10–12" by taking the average
+                if (!match) {
+                    match = item.match(/(\d+)\s?–\s?(\d+)/);
+                    if (match) {
+                        total += (parseInt(match[1]) + parseInt(match[2])) / 2;
+                        return; // Skip further processing for this item
+                    }
+                }
+                
+                if (match && !isNaN(parseInt(match[1]))) {
+                    total += parseInt(match[1]);
+                }
+                // For chain names without explicit numbers, if there are no other explicit numbers for that country,
+                // additional handling might be needed, but for now, only explicit numbers are accumulated.
+            });
+            return total;
         }
 
         /**
@@ -242,14 +296,16 @@
                 <p><strong>Total Population:</strong> ${data.totalPop} Million</p>
                 <p><strong>Asian Immigrant Population:</strong> ≈${data.immigrantPop} Million</p>
                 <p><strong>Asian Immigrant Ratio:</strong> ≈${data.immigrantRatio}%</p>
-                <p><strong>Regional Characteristics & Culinary Features:</strong> ${data.characteristics}</p>
+                <p><strong>Regional Characteristics & Food Culture:</strong> ${data.characteristics}</p>
             `;
 
             const supermarketContent = document.getElementById('supermarket-content');
             let supermarketHtml = `<ul class="list-disc list-inside text-slate-700 space-y-1">`;
-            supermarketHtml += `<li><strong>Main Asian Supermarkets/Major City Count:</strong></li>`;
+            supermarketHtml += `<li><strong>Main Asian Supermarkets / Major City Numbers:</strong></li>`;
+            // The supermarket array contains mixed Chinese and English, so it's kept as is.
             supermarketHtml += data.supermarkets.map(item => `<li>${item}</li>`).join('');
             supermarketHtml += `<li><strong>Local Large Asian Food Wholesalers:</strong></li>`;
+            // The wholesalers array contains mixed Chinese and English, so it's kept as is.
             supermarketHtml += data.wholesalers.map(item => `<li>${item}</li>`).join('');
             supermarketHtml += `<li><strong>Estimated Total Wholesalers:</strong> Approx. ${data.totalWholesalers}</li>`;
             supermarketHtml += `</ul>`;
@@ -263,7 +319,7 @@
                 data: {
                     labels: sourceData.labels,
                     datasets: [{
-                        label: 'Proportion of Main Immigrant Origin Countries',
+                        label: 'Proportion of Immigrants by Main Origin Country',
                         data: sourceData.values,
                         backgroundColor: palette,
                         borderColor: '#f8fafc',
@@ -279,7 +335,7 @@
                             position: 'bottom', 
                             labels: { 
                                 font: { size: 12 },
-                                // Custom label generation to include percentage in legend
+                                // Custom label generation to include percentage in the legend
                                 generateLabels: function(chart) {
                                     const data = chart.data;
                                     if (data.labels.length && data.datasets.length) {
@@ -353,7 +409,7 @@
                                 label: function(context) {
                                     const label = context.label || '';
                                     const originalRange = restaurantData[label];
-                                    return `${label}: Approx. ${originalRange[0]} ~ ${originalRange[1]} stores`;
+                                    return `${label}: Approx. ${originalRange[0]} ~ ${originalRange[1]} `;
                                 }
                             }
                         }
@@ -363,7 +419,7 @@
         }
         
         /**
-         * Initializes the bar chart for the overview of Asian immigrant ratio by country.
+         * Initializes the bar chart for the overview of Asian immigrant ratios by country.
          */
         function initializeComparisonChart() {
             // Filter out UK data
@@ -388,9 +444,11 @@
                         label: 'Asian Immigrant Ratio (%)',
                         data: values,
                         backgroundColor: (context) => {
+                            // Check if the label contains "United Kingdom"
                             return context.chart.data.labels[context.dataIndex].includes('United Kingdom') ? chartColors.accent : chartColors.primaryBg;
                         },
                         borderColor: (context) => {
+                            // Check if the label contains "United Kingdom"
                             return context.chart.data.labels[context.dataIndex].includes('United Kingdom') ? chartColors.accent : chartColors.primary;
                         },
                         borderWidth: 2,
@@ -415,7 +473,7 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Immigrant Proportion of Total Population (%)'
+                                text: 'Immigrant Population Ratio to Total Population (%)'
                             },
                              grid: {
                                 color: 'rgba(203, 213, 225, 0.3)'
@@ -432,7 +490,90 @@
         }
 
         /**
-         * Initializes the bar chart for the overview of Asian restaurant count by country (non-stacked), using a single theme color.
+         * Initializes the bar chart for the overview of Asian supermarket numbers by country.
+         */
+        function initializeSupermarketComparisonChart() {
+            const ukData = reportData.find(c => c.country.includes('United Kingdom'));
+            const otherCountries = reportData.filter(c => !c.country.includes('United Kingdom'));
+
+            const supermarketTotalsForSorting = otherCountries.map(country => {
+                return {
+                    country: country.country,
+                    // Use manualSupermarketCount if exists, otherwise use getEstimatedSupermarketCount
+                    totalSupermarkets: country.manualSupermarketCount !== undefined ? country.manualSupermarketCount : getEstimatedSupermarketCount(country.supermarkets)
+                };
+            });
+
+            const sortedSupermarketData = [...supermarketTotalsForSorting].sort((a, b) => b.totalSupermarkets - a.totalSupermarkets);
+
+            if (ukData) {
+                sortedSupermarketData.push({
+                    country: ukData.country,
+                    // Use manualSupermarketCount if exists, otherwise use getEstimatedSupermarketCount
+                    totalSupermarkets: ukData.manualSupermarketCount !== undefined ? ukData.manualSupermarketCount : getEstimatedSupermarketCount(ukData.supermarkets)
+                });
+            }
+
+            const labels = sortedSupermarketData.map(d => d.country);
+            const values = sortedSupermarketData.map(d => d.totalSupermarkets);
+
+            if (supermarketComparisonChart) supermarketComparisonChart.destroy();
+            supermarketComparisonChart = new Chart(document.getElementById('supermarket-comparison-chart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Estimated Total Asian Supermarkets',
+                        data: values,
+                        backgroundColor: (context) => {
+                            return context.chart.data.labels[context.dataIndex].includes('United Kingdom') ? chartColors.accent : supermarketComparisonThemeColor;
+                        },
+                        borderColor: (context) => {
+                            return context.chart.data.labels[context.dataIndex].includes('United Kingdom') ? chartColors.accent : supermarketComparisonThemeColor;
+                        },
+                        borderWidth: 2,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = Math.round(context.raw);
+                                    return `${label}: Approx. ${value} `;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Estimated Total Asian Supermarkets'
+                            },
+                            grid: {
+                                color: 'rgba(203, 213, 225, 0.3)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        /**
+         * Initializes the bar chart for the overview of Asian restaurant numbers by country (non-stacked), using a single theme color.
          */
         function initializeRestaurantComparisonChart() {
             // Filter out UK data
@@ -454,7 +595,7 @@
             // Sort other countries by total restaurant count in descending order
             const sortedRestaurantData = [...restaurantTotalsForSorting].sort((a, b) => b.totalRestaurants - a.totalRestaurants);
 
-            // If UK data exists, calculate its total average number and place it at the end
+            // If UK data exists, calculate its total average and place it at the end
             if (ukData) {
                 let ukTotalAverage = 0;
                 for (const cuisine in ukData.restaurants) {
@@ -475,12 +616,14 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Total Asian Restaurant Count (Estimated)',
+                        label: 'Estimated Total Asian Restaurants',
                         data: values,
                         backgroundColor: (context) => {
+                            // Check if the label contains "United Kingdom" (UK in Chinese), and use theme color or accent color
                             return context.chart.data.labels[context.dataIndex].includes('United Kingdom') ? chartColors.accent : restaurantComparisonThemeColor;
                         },
                         borderColor: (context) => {
+                            // Check if the label contains "United Kingdom" (UK in Chinese), and use theme color or accent color
                             return context.chart.data.labels[context.dataIndex].includes('United Kingdom') ? chartColors.accent : restaurantComparisonThemeColor;
                         },
                         borderWidth: 2,
@@ -491,13 +634,13 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false }, // Single bar chart does not need a legend
+                        legend: { display: false }, // No legend needed for single bar chart
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
                                     const label = context.label || '';
                                     const value = Math.round(context.raw);
-                                    return `${label}: Approx. ${value} stores`;
+                                    return `${label}: Approx. ${value} `;
                                 }
                             }
                         }
@@ -514,7 +657,7 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Total Asian Restaurant Count (Estimated)'
+                                text: 'Estimated Total Asian Restaurants'
                             },
                              grid: {
                                 color: 'rgba(203, 213, 225, 0.3)'
@@ -526,7 +669,7 @@
         }
 
         /**
-         * Initializes the bar chart for the overview of Asian food wholesaler count by country.
+         * Initializes the bar chart for the overview of total Asian food wholesalers by country.
          */
         function initializeWholesalerComparisonChart() {
             const ukData = reportData.find(c => c.country.includes('United Kingdom'));
@@ -547,7 +690,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Total Asian Food Wholesaler Count (Estimated)',
+                        label: 'Estimated Total Asian Food Wholesalers',
                         data: values,
                         backgroundColor: (context) => {
                             return context.chart.data.labels[context.dataIndex].includes('United Kingdom') ? chartColors.accent : wholesalerComparisonThemeColor;
@@ -569,7 +712,7 @@
                                 label: function(context) {
                                     const label = context.label || '';
                                     const value = Math.round(context.raw);
-                                    return `${label}: Approx. ${value} stores`;
+                                    return `${label}: Approx. ${value} `;
                                 }
                             }
                         }
@@ -584,7 +727,7 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Total Asian Food Wholesaler Count (Estimated)'
+                                text: 'Estimated Total Asian Food Wholesalers'
                             },
                             grid: {
                                 color: 'rgba(203, 213, 225, 0.3)'
@@ -606,7 +749,7 @@
             // Sort other countries by immigrant population in descending order
             const sortedOtherCountriesForSelector = [...otherCountriesForSelector].sort((a, b) => b.immigrantPop - a.immigrantPop);
 
-            // Merge sorted other countries with UK data, placing UK data at the end for the dropdown
+            // Combine sorted other countries with UK data placed at the end for the dropdown
             const finalSortedDataForSelector = ukDataForSelector ? [...sortedOtherCountriesForSelector, ukDataForSelector] : sortedOtherCountriesForSelector;
 
 
@@ -617,20 +760,21 @@
                 selector.appendChild(option);
             });
 
+            // Default selection to Germany
+            selector.value = 'Germany'; // Set default value to English "Germany"
+            updateDashboard('Germany'); // Update dashboard with English "Germany"
+            
             selector.addEventListener('change', (e) => {
                 updateDashboard(e.target.value);
             });
             
-            // Default selection to Germany
-            selector.value = 'Germany';
-            updateDashboard('Germany');
             initializeComparisonChart();
-            initializeRestaurantComparisonChart(); // Initialize the new restaurant count overview chart
-            initializeWholesalerComparisonChart(); // Initialize the new wholesaler count overview chart
+            initializeSupermarketComparisonChart(); // Initialize new supermarket count overview chart
+            initializeRestaurantComparisonChart(); // Initialize restaurant count overview chart
+            initializeWholesalerComparisonChart(); // Initialize wholesaler count overview chart
         });
 
     </script>
-
 
 </body>
 </html>
